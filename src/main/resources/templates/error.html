@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{status}} {{error}}</title>
+</head>
+<body>
+
+<h1>{{status}} {{error}}</h1>
+
+{% if exception is not null %}
+<h3>{{ exception }}</h3>
+{% endif %}
+
+{% if trace is not null %}
+<pre>{{ trace }}</pre>
+{% endif %}
+
+<p>
+{{timestamp}}<br>
+Path {{path}}
+</p>
+
+</body>
+</html>

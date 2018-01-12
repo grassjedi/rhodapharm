@@ -1,0 +1,52 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.7.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+
+jar {
+	baseName = 'rhodapharmacy'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.postgresql:postgresql:42.1.1')
+	compile('org.apache.commons:commons-dbcp2:2.1.1')
+	compile('org.springframework:spring-jdbc:4.0.6.RELEASE')
+	compile('org.apache.httpcomponents:httpclient:4.1.1')
+
+    compile("org.springframework.boot:spring-boot-devtools")
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile("com.mitchellbosecke:pebble-spring-boot-starter:2.4.0")
+    compile('org.codehaus.groovy:groovy:2.4.7')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile "org.spockframework:spock-spring"
+}
+
+bootRun {
+	addResources = true
+	jvmArgs = [ "-Dgoogle.clientId=" + project.findProperty("google.clientId"), "-Dgoogle.clientSecret=" + project.findProperty("google.clientSecret") ]
+}
+
+test {
+    systemProperty("spring.profiles.active", "test")
+}
