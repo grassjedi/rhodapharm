@@ -44,7 +44,6 @@ dependencies {
 
 bootRun {
 	addResources = true
-	jvmArgs = [ "-Dgoogle.clientId=" + project.findProperty("google.clientId"), "-Dgoogle.clientSecret=" + project.findProperty("google.clientSecret") ]
 }
 
 test {
