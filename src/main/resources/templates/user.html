@@ -4,6 +4,20 @@
 
 <div class="container">
     <div class="row">
+        <div class="row">
+            <div class="col-xs-12">
+                <form method="post" action="/user">
+                    <div class="input-group">
+                        <input name="email" class="form-control" type="email" placeholder="user@host.com" />
+                        <span class="input-group-btn">
+                            <button id="save-button" name="save-button" class="btn btn-default">Add</button>
+                        </span>
+                    </div>
+                    <input id="roles" name="roles" value="" type="hidden" />
+                    <input id="create-operation" name="operation" value="create" type="hidden" />
+                </form>
+            </div>
+        </div>
         <div class="col-xs-12">
             <table class="table">
                 <thead>

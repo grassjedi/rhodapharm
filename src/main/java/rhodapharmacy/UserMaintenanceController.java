@@ -48,7 +48,9 @@ public class UserMaintenanceController {
             userRepository.updateUser(userId, roles);
         }
         else if("create".equalsIgnoreCase(operation)) {
-            userRepository.addUser(email, roles);
+            if(email != null && !"".equals(email.trim())) {
+                userRepository.addUser(email, roles);
+            }
         }
         else if("disable".equalsIgnoreCase(operation)) {
             userRepository.disableUser(userId);
