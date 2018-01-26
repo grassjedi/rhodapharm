@@ -78,7 +78,7 @@ public class GoogleAuthFilter implements Filter {
             }
             String callbackState = queryParams.get("state");
             log.debug("looking up session: {}", callbackState);
-            UserSession userSession = authorisationService.validateSession(callbackState);
+            UserSession userSession = authorisationService.getSession(callbackState);
             if(userSession == null) {
                 String googleAuthUrl = this.googleAuthUrl.replace(STATE_TOKEN, authorisationService.createSession().getSessionKey());
                 res.sendRedirect(googleAuthUrl);
@@ -86,7 +86,9 @@ public class GoogleAuthFilter implements Filter {
                 return;
             }
             try {
+                log.debug("authorising user session");
                 authorisationService.authoriseSession(userSession, queryParams.get("code"));
+                log.debug("user is{}authorised with session {} redirecting to /", userSession.isAuthorised() ? " " : " NOT ", userSession.getSessionKey());
                 res.addCookie(new Cookie("kaart", userSession.getSessionKey()));
                 res.sendRedirect("/");
                 return;
@@ -100,14 +102,23 @@ public class GoogleAuthFilter implements Filter {
             String kaartToken = getKaartTokenCookieValue(req);
             UserSession userSession = null;
             if(kaartToken != null) {
-                userSession = authorisationService.validateSession(kaartToken);
+                log.debug("user session token = {}", kaartToken);
+                userSession = authorisationService.getSession(kaartToken);
             }
-            if(userSession == null) {
-                log.debug("no session found for request");
+            else {
+                log.debug("no session token present");
+            }
+            if(userSession == null || !userSession.isAuthorised()) {
+                log.debug("no session for user redirecting to google for auth");
                 res.sendRedirect(googleAuthUrl.replace(STATE_TOKEN, authorisationService.createSession().getSessionKey()));
                 return;
             }
+            else {
+                log.debug("{} authorised session for {} was found for key: {}", userSession, userSession.getUserEmail(), kaartToken);
+            }
             req.setAttribute("userSession", userSession);
+            log.debug("session is valid invoking remaining filter chain");
+            chain.doFilter(request, response);
             return;
         }
     }

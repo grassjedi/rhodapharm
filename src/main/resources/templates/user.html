@@ -1,0 +1,48 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Disabled</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr userId="{{ user.id }}">
+                            <td><a href="/user/{{ user.id }}">{{ user.email }}</a></td>
+                            <td><input type="checkbox" class="user-disable-checkbox" {% if user.disabled != null %}checked{% endif %}/></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <form id="user-form" action="/user" method="post" style="display: none">
+        <input id="userId" name="userId" type="hidden"/>
+        <input id="operation" name="operation" type="hidden" />
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(".user-disable-checkbox").on("change", function() {
+        var userId = $(this).closest("tr").attr("userId");
+        $("#userId").val(userId);
+        if($(this).is(":checked")) {
+            console.log("disable " + userId);
+            $("#operation").val("disable");
+        }
+        else {
+            console.log("enable" + userId);
+            $("#operation").val("enable");
+        }
+        $("#user-form").submit();
+    })
+</script>
+
+{% endblock %}

@@ -13,6 +13,9 @@ public class User {
     private String tokenInfo;
     private Date tokenExpiry;
 
+    private boolean googleLoginActive;
+    private boolean sessionActive;
+
     public Long getId() {
         return id;
     }
@@ -83,5 +86,21 @@ public class User {
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public boolean isGoogleLoginActive() {
+        return googleLoginActive;
+    }
+
+    public void setGoogleLoginActive(boolean googleLoginActive) {
+        this.googleLoginActive = googleLoginActive;
+    }
+
+    public boolean isSessionActive() {
+        return sessionActive;
+    }
+
+    public void setSessionActive(boolean sessionActive) {
+        this.sessionActive = sessionActive;
     }
 }

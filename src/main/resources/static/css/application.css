@@ -11,3 +11,8 @@
 .navbar-brand a:hover {
     text-decoration: none;
 }
+
+p.title {
+    font-weight: bolder;
+    text-align: center;
+}

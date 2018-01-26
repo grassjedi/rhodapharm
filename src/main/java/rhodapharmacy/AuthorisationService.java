@@ -27,19 +27,9 @@ public class AuthorisationService {
         this.userRepository = userRepository;
     }
 
-    public UserSession validateSession(String sessionKey) {
+    public UserSession getSession(String sessionKey) {
         try {
-            UserSession userSession = sessionRepository.retrieveSession(sessionKey);
-            if(userSession.isSessionExpired() || (!userSession.isAnonymous() && userSession.isUserTokenExpired())) {
-                if(userSession.isAnonymous()) {
-                    log.debug("authorisation failed for anonymous user");
-                }
-                else {
-                    log.debug("authorisation failed for: {}", userSession.getUser().getEmail());
-                }
-                return null;
-            }
-            return userSession;
+            return sessionRepository.retrieveSession(sessionKey);
         }
         catch (SQLException e) {
             log.info("failed to retrieve session", e);

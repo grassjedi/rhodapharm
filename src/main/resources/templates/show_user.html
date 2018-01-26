@@ -1,0 +1,52 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="title"><span class="glyphicon-pencil"></span> {{ user.email }}</p>
+            <form id="user-form" action="/user" method="post">
+                {% for role in allRoles %}
+                    <input id="role_{{ role }}" name="role_{{ role }}" class="role-checkbox" type="checkbox" role-name="{{ role }}">
+                    <label for="role_{{ role }}">{{ role.displayName }}</label>
+                {% endfor %}
+                <input id="userId" name="userId" type="hidden" value="{{ user.id }}" />
+                <input id="roles" name="roles" type="hidden" />
+                <input id="operation" name="operation" type="hidden" value="update" />
+                <br/>
+                <button id="save-button" name="save-button" class="btn btn-lg btn-default">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var submitting = false;
+    $(function() {
+        var roleList = "{{ user.roles }}".split(" ");
+        for(var index = 0; index < roleList.length; index++) {
+            var checkbox = $("#role_" + roleList[index]);
+            if(checkbox.length > 0) {
+                checkbox.prop("checked", true);
+            }
+        }
+    });
+    $("#save-button").click(function () {
+        if(submitting) return;
+        var checkboxes = $(".role-checkbox");
+        $("#save-button").prop('disabled', true);
+        checkboxes.prop('disabled', true);
+        submitting = true;
+        var roleAr = [];
+        checkboxes.each(function () {
+           if($(this).is(":checked")) {
+               roleAr.push($(this).attr("role-name"));
+           }
+        });
+        $("#roles").val(roleAr.join(" "));
+        $("#user-form").submit();
+    });
+</script>
+
+{% endblock %}

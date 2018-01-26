@@ -77,7 +77,7 @@ public class SessionRepository {
                             "s.expiry AS session_expiry, " +
                             "u.id AS usr_id, " +
                             "u.email AS usr_email, " +
-                            "u.roles AS usr_role, " +
+                            "u.roles AS usr_roles, " +
                             "u.token AS usr_token, " +
                             "u.created AS usr_created, " +
                             "u.disabled AS usr_disabled " +
@@ -105,6 +105,7 @@ public class SessionRepository {
                     user.setId(userId);
                     user.setEmail(resultSet.getString("usr_email"));
                     user.setToken(resultSet.getString("usr_token"));
+                    user.setRoles(resultSet.getString("usr_roles"));
                     user.setCreated(resultSet.getTimestamp("usr_created"));
                     user.setDisabled(resultSet.getTimestamp("usr_disabled"));
                 }
