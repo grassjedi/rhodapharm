@@ -16,3 +16,7 @@ p.title {
     font-weight: bolder;
     text-align: center;
 }
+
+.input-group-btn.input-space {
+    padding-left: 15px;
+}
