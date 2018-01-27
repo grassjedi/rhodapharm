@@ -37,14 +37,14 @@ public class GoogleService {
     private final String clientSecret;
     private final String redirectUrl;
 
-    public GoogleService(SecuredConfig securedConfig, Environment environment) {
+    public GoogleService(SecuredConfig securedConfig) {
         objectMapper = new ObjectMapper();
         clientId      = securedConfig.getProperty("google.clientId");
         clientSecret  = securedConfig.getProperty("google.clientSecret");
         if(clientId == null || clientId.isEmpty() || clientSecret == null || clientSecret.isEmpty()) {
             throw new IllegalStateException("could not resolve google client credentials");
         }
-        redirectUrl   = environment.getProperty("google.redirectUrl");
+        redirectUrl   = securedConfig.getProperty("google.redirectUrl");
     }
 
     public GoogleAccessToken getAccessToken(String code)
