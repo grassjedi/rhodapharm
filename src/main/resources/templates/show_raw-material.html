@@ -16,13 +16,9 @@
                         <option value="{{ unit.name }}" {% if unit.name == rawMaterial.units.name %}selected{% endif %}>{{ unit.displayName }}</option>
                     {% endfor %}
                 </select>
-                <div class="col-xs-12 input-group">
-                    <span class="input-group-btn">
-                        <a id="cancel-button" class="btn btn-primary" href="/raw-material?offset={{ offset }}&limit={{ limit }}">Cancel</a>
-                    </span>
-                    <span class="input-group-btn">
-                        <button id="save-button" name="save-button" type="submit" class="btn btn-default">Update</button>
-                    </span>
+                <div class=" btn-group">
+                    <a id="cancel-button" class="btn btn-primary" href="/raw-material?offset={{ offset }}&limit={{ limit }}">Cancel</a>
+                    <button id="save-button" name="save-button" type="submit" class="btn btn-default">Update</button>
                 </div>
             </div>
         </form>
