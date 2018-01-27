@@ -1,0 +1,81 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <form id="create-form" method="post" action="/raw-material">
+            <div class="col-xs-4">
+                <input name="name" class="form-control" type="text" placeholder="name" required/>
+            </div>
+            <div class="col-xs-4">
+                <select name="units" class="form-control" required>
+                    {% for unit in allUnits %}
+                        <option value="{{ unit.name }}">{{ unit.displayName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input name="operation" type="hidden" value="create" />
+            <div class="col-xs-4">
+                <button id="save-button" name="save-button" class="btn btn-default">Add</button>
+            </div>
+        </form>
+    </div>
+    <div class="row"><div class="col-xs-12">&nbsp;</div></div>
+    <div class="row">
+        <div class="col-xs-12">
+            {% if hasPrev %}
+            <div style="float:left;">
+                <a id="prev-button" class="btn btn-primary" href="/raw-material?offset={{ prevOffset }}&limit={{ limit }}">&lt;&lt; Previous</a>
+            </div>
+            {% endif %}
+            {% if hasMore %}
+            <div style="float:right;">
+                <a id="next-button" class="btn btn-primary" href="/raw-material?offset={{ nextOffset }}&limit={{ limit }}">Next &gt;&gt;</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-xs-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Units</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for material in rawMaterials %}
+                    <tr materialId="{{ material.id }}">
+                        <td><a href="/raw-material/{{ material.id }}?offset={{ offset }}&limit={{ limit }}">{{ material.name }}</a></td>
+                        <td>{{ material.units.displayName }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-12">
+            {% if hasPrev %}
+            <div style="float:left;">
+                <a id="prev-button2" class="btn btn-primary" href="/raw-material?offset={{ prevOffset }}&limit={{ limit }}">&lt;&lt; Previous</a>
+            </div>
+            {% endif %}
+            {% if hasMore %}
+            <div style="float:right;">
+                <a id="next-button2" class="btn btn-primary" href="/raw-material?offset={{ nextOffset }}&limit={{ limit }}">Next &gt;&gt;</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <form id="user-form" action="/user" method="post" style="display: none">
+        <input id="rawMaterialId" name="rawMaterialId" type="hidden"/>
+        <input id="operation" name="operation" type="hidden" />
+    </form>
+</div>
+
+<script type="text/javascript">
+    $("#save-button").on("click", function() {
+        $("#create-form").submit();
+    });
+</script>
+
+{% endblock %}

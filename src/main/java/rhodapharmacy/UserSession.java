@@ -75,4 +75,8 @@ public class UserSession {
     public boolean getUserAdmin() {
         return hasRole(UserRole.USER_ADMIN);
     }
+
+    public boolean getRawMaterialAdmin() {
+        return hasRole(UserRole.RAW_MATERIAL_MAINTENANCE);
+    }
 }

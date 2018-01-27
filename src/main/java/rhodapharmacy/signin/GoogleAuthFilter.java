@@ -145,6 +145,7 @@ public class GoogleAuthFilter implements Filter {
     private String getKaartTokenCookieValue(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
         String kaartToken = null;
+        if(cookies == null) return null;
         for (Cookie cookie : cookies) {
             if ("kaart".equals(cookie.getName())) {
                 kaartToken = cookie.getValue();

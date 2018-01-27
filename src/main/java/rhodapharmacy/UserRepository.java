@@ -131,7 +131,7 @@ public class UserRepository {
         String email = "UNKNOWN";
         while(resultSet.next()) {
             if(count++ > 1) {
-                throw new XNoUniqueRecord(email);
+                throw new XNoUniqueRecord(String.format("the user email, %s, does not represent a unique user", email));
             }
             user = new User();
             user.setId(resultSet.getLong("id"));

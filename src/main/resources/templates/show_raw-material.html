@@ -1,0 +1,36 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <form id="create-form" method="post" action="/raw-material">
+            <div class="col-xs-12">
+                <input name="operation" type="hidden" value="update" />
+                <input name="rawMaterialId" type="hidden" value="{{ rawMaterial.id }}" />
+                <input name="offset" type="hidden" value="{{ offset }}" />
+                <input name="limit" type="hidden" value="{{ limit }}" />
+                <input name="name" class="form-control" type="text" placeholder="name" value="{{ rawMaterial.name }}" required/>
+                <select name="units" class="form-control" required>
+                    {% for unit in allUnits %}
+                        <option value="{{ unit.name }}" {% if unit.name == rawMaterial.units.name %}selected{% endif %}>{{ unit.displayName }}</option>
+                    {% endfor %}
+                </select>
+                <div class="col-xs-4 input-group" style="text-align: right;">
+                    <span class="input-group-btn">
+                        <a id="cancel-button" class="btn btn-primary" href="/raw-material?offset={{ offset }}&limit={{ limit }}">Cancel</a>
+                    </span>
+                    <span class="input-group-btn">
+                        <button id="save-button" name="save-button" type="submit" class="btn btn-default">Update</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+
+{% endblock %}
