@@ -27,14 +27,13 @@ public class GoogleAuthFilter implements Filter {
     private AuthorisationService authorisationService;
 
     public GoogleAuthFilter(
-            Environment environment,
             SecuredConfig securedConfig,
             AuthorisationService authorisationService) {
         this.authorisationService = authorisationService;
         String clientId      = securedConfig.getProperty("google.clientId");
-        String redirectUri    = environment.getProperty("google.redirectUrl");
-        String scope          = environment.getProperty("google.scope");
-        String accessType     = environment.getProperty("google.accessType");
+        String redirectUri    = securedConfig.getProperty("google.redirectUrl");
+        String scope          = securedConfig.getProperty("google.scope");
+        String accessType     = securedConfig.getProperty("google.accessType");
         if(clientId == null || clientId.isEmpty()) {
             throw new IllegalStateException("could not resolve google client credentials");
         }
@@ -47,7 +46,7 @@ public class GoogleAuthFilter implements Filter {
                         "&access_type=" + accessType + "" +
                         "&response_type=code" +
                         "&state=" + STATE_TOKEN + "";
-        this.authCallbackUrl = environment.getProperty("google.callbackUrl");
+        this.authCallbackUrl = securedConfig.getProperty("google.callbackUrl");
     }
 
     @Override
