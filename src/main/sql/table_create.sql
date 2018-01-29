@@ -23,22 +23,21 @@ CREATE INDEX usr_session_key ON usr_session(key);
 CREATE TABLE raw_material (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
-  description TEXT,
   units TEXT NOT NULL
 );
 
 CREATE TABLE product (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
-  description TEXT,
-  units TEXT NOT NULL
+  disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE formulation (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   raw_material_id BIGINT NOT NULL REFERENCES raw_material(id),
   product_id BIGINT NOT NULL REFERENCES product(id),
-  quantity BIGINT NOT NULL
+  quantity BIGINT NOT NULL,
+  disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX formulation_product_foreign_key_index ON formulation(product_id);

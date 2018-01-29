@@ -28,4 +28,8 @@ public class Formulation {
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
+
+    public String getQuantityDescription() {
+        return String.format("%1$,.2f", quantity.doubleValue() / 1000000.0d) + " " + rawMaterial.getUnits().getDisplayName();
+    }
 }

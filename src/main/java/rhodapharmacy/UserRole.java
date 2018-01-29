@@ -4,7 +4,8 @@ package rhodapharmacy;
 public enum UserRole {
 
     USER_ADMIN("User Administration"),
-    RAW_MATERIAL_MAINTENANCE("Raw Materials Administration");
+    RAW_MATERIAL_MAINTENANCE("Raw Materials Administration"),
+    PRODUCT_MAINTENANCE("Product Administration");
 
     private final String displayName;
 

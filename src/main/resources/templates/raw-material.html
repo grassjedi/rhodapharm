@@ -24,23 +24,12 @@
     <div class="row"><div class="col-xs-12">&nbsp;</div></div>
     <div class="row">
         <div class="col-xs-12">
-            {% if hasPrev %}
-            <div style="float:left;">
-                <a id="prev-button" class="btn btn-primary" href="/raw-material?offset={{ prevOffset }}&limit={{ limit }}">&lt;&lt; Previous</a>
-            </div>
-            {% endif %}
-            {% if hasMore %}
-            <div style="float:right;">
-                <a id="next-button" class="btn btn-primary" href="/raw-material?offset={{ nextOffset }}&limit={{ limit }}">Next &gt;&gt;</a>
-            </div>
-            {% endif %}
-        </div>
-        <div class="col-xs-12">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Units</th>
+                        <th>Disabled</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,33 +37,38 @@
                     <tr materialId="{{ material.id }}">
                         <td><a href="/raw-material/{{ material.id }}?offset={{ offset }}&limit={{ limit }}">{{ material.name }}</a></td>
                         <td>{{ material.units.displayName }}</td>
+                        <td><input class="form-control disabled-checkbox" type="checkbox" {% if material.disabled == true %}checked{% endif %}/></td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="col-xs-12">
-            {% if hasPrev %}
-            <div style="float:left;">
-                <a id="prev-button2" class="btn btn-primary" href="/raw-material?offset={{ prevOffset }}&limit={{ limit }}">&lt;&lt; Previous</a>
-            </div>
-            {% endif %}
-            {% if hasMore %}
-            <div style="float:right;">
-                <a id="next-button2" class="btn btn-primary" href="/raw-material?offset={{ nextOffset }}&limit={{ limit }}">Next &gt;&gt;</a>
-            </div>
-            {% endif %}
-        </div>
     </div>
-    <form id="user-form" action="/user" method="post" style="display: none">
+    <form id="disable-enable-form" action="/raw-material" method="post" style="display: none">
         <input id="rawMaterialId" name="rawMaterialId" type="hidden"/>
-        <input id="operation" name="operation" type="hidden" />
+        <input id="rawMaterialDisabled" name="disabled" type="hidden"/>
+        <input name="offset" type="hidden" value="{{ offset }}"/>
+        <input name="limit" type="hidden" value="{{ limit }}" />
+        <input id="operation" name="operation" type="hidden" value="disable"/>
     </form>
 </div>
 
 <script type="text/javascript">
     $("#save-button").on("click", function() {
         $("#create-form").submit();
+    });
+    $(".disabled-checkbox").on("change", function() {
+        var rawMaterialId = $(this).closest("tr").attr("materialId");
+        $("#rawMaterialId").val(rawMaterialId);
+        if($(this).is(":checked")) {
+            console.log("disabling " + rawMaterialId);
+            $("#rawMaterialDisabled").val("true");
+        }
+        else {
+            console.log("enabling " + rawMaterialId);
+            $("#rawMaterialDisabled").val("false");
+        }
+        $("#disable-enable-form").submit();
     });
 </script>
 

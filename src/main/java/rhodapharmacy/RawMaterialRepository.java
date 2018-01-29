@@ -32,13 +32,12 @@ public class RawMaterialRepository {
             public RawMaterial doAction(Connection connection)
             throws SQLException {
                 PreparedStatement statement = connection.prepareStatement("" +
-                        "INSERT INTO raw_material (name, description, units) " +
-                        "VALUES (?, ?, ?) RETURNING id");
+                        "INSERT INTO raw_material (name, units) " +
+                        "VALUES (?, ?) RETURNING id");
                 for(int i = 0; i < rawMaterial.size(); i++) {
                     RawMaterial material = rawMaterial.get(i);
                     statement.setString(1, material.getName());
-                    statement.setObject(2, material.getDescripion(), Types.VARCHAR);
-                    statement.setString(3, material.getUnits().name());
+                    statement.setString(2, material.getUnits().name());
                     batchEntities.add(material);
                     statement.addBatch();
                     if(batchEntities.size() == maxBatchSize || (i == (rawMaterial.size() - 1))) {
@@ -66,7 +65,6 @@ public class RawMaterialRepository {
             public RawMaterial doAction(Connection connection)
                     throws SQLException {
                 PreparedStatement statement = connection.prepareStatement("UPDATE raw_material SET deleted = ? WHERE id = ?");
-                int batchSize = 0;
                 for(int i = 0; i < rawMaterial.size(); i++) {
                     RawMaterial material = rawMaterial.get(i);
                     statement.setTimestamp(1, deleted);
@@ -75,7 +73,6 @@ public class RawMaterialRepository {
                     statement.addBatch();
                     if(batch.size() == maxBatchSize || (i == (rawMaterial.size() - 1))) {
                         statement.executeBatch();
-                        batchSize = 0;
                     }
                 }
                 return null;
@@ -94,7 +91,7 @@ public class RawMaterialRepository {
             @Override
             public RawMaterial doAction(Connection connection)
                     throws SQLException {
-                PreparedStatement statement = connection.prepareStatement("SELECT id, name, description, units FROM raw_material WHERE id = ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT id, name, units FROM raw_material WHERE id = ?");
                 statement.setLong(1, id);
                 ResultSet resultSet = statement.executeQuery();
                 List<RawMaterial> rawMaterials = mapRawMaterials(resultSet, true);
@@ -113,7 +110,7 @@ public class RawMaterialRepository {
             @Override
             public List<RawMaterial> doAction(Connection connection)
                     throws SQLException {
-                PreparedStatement statement = connection.prepareStatement("SELECT id, name, description, units FROM raw_material WHERE name ILIKE ? OR description ILIKE ? ORDER BY name OFFSET ? LIMIT ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT id, name, units, disabled FROM raw_material WHERE name ILIKE ? OR description ILIKE ? ORDER BY name OFFSET ? LIMIT ?");
                 String param = "%" + search.trim() + "%";
                 statement.setString(1, param);
                 statement.setString(2, param);
@@ -131,9 +128,25 @@ public class RawMaterialRepository {
             @Override
             public List<RawMaterial> doAction(Connection connection)
                     throws SQLException {
-                PreparedStatement statement = connection.prepareStatement("SELECT id, name, description, units FROM raw_material ORDER BY name OFFSET ? LIMIT ?");
+                PreparedStatement statement = connection.prepareStatement("SELECT id, name, units, disabled FROM raw_material ORDER BY name OFFSET ? LIMIT ?");
                 statement.setLong(1, offset);
                 statement.setLong(2, max);
+                ResultSet resultSet = statement.executeQuery();
+                return mapRawMaterials(resultSet, false);
+            }
+        }.execute();
+    }
+
+    public List<RawMaterial> findAllRawMaterial(boolean includeDisabled)
+    throws SQLException {
+        return new SqlTemplate<List<RawMaterial>>(dataSource) {
+            @Override
+            public List<RawMaterial> doAction(Connection connection)
+                    throws SQLException {
+                PreparedStatement statement =
+                        includeDisabled ?
+                        connection.prepareStatement("SELECT id, name, units, disabled FROM raw_material ORDER BY name")
+                        : connection.prepareStatement("SELECT id, name, units, disabled FROM raw_material WHERE disabled = false ORDER BY name");
                 ResultSet resultSet = statement.executeQuery();
                 return mapRawMaterials(resultSet, false);
             }
@@ -166,10 +179,25 @@ public class RawMaterialRepository {
             RawMaterial rawMaterial = new RawMaterial();
             rawMaterial.setId(resultSet.getLong("id"));
             rawMaterial.setName(resultSet.getString("name"));
-            rawMaterial.setDescripion(resultSet.getString("description"));
             rawMaterial.setUnits(Unit.valueOf(resultSet.getString("units")));
+            rawMaterial.setDisabled(resultSet.getBoolean("disabled"));
             result.add(rawMaterial);
         }
         return result;
+    }
+
+    public void setDisabled(Long rawMaterialId, Boolean disabled)
+    throws SQLException {
+        new SqlTemplate<List<RawMaterial>>(dataSource) {
+            @Override
+            public List<RawMaterial> doAction(Connection connection)
+                    throws SQLException {
+                PreparedStatement statement = connection.prepareStatement("UPDATE raw_material SET disabled = ? WHERE id = ?");
+                statement.setBoolean(1, disabled);
+                statement.setLong(2, rawMaterialId);
+                statement.executeUpdate();
+                return null;
+            }
+        }.execute();
     }
 }

@@ -1,13 +1,10 @@
 package rhodapharmacy;
 
-import java.util.Date;
-
 public class RawMaterial {
     private Long id;
     private String name;
-    private String descripion;
     private Unit units;
-    private Date deleted;
+    private Boolean disabled;
 
     public Long getId() {
         return id;
@@ -25,14 +22,6 @@ public class RawMaterial {
         this.name = name;
     }
 
-    public String getDescripion() {
-        return descripion;
-    }
-
-    public void setDescripion(String descripion) {
-        this.descripion = descripion;
-    }
-
     public Unit getUnits() {
         return units;
     }
@@ -41,11 +30,11 @@ public class RawMaterial {
         this.units = units;
     }
 
-    public Date getDeleted() {
-        return deleted;
+    public Boolean getDisabled() {
+        return disabled;
     }
 
-    public void setDeleted(Date deleted) {
-        this.deleted = deleted;
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 }

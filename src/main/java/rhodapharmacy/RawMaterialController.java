@@ -25,31 +25,17 @@ public class RawMaterialController {
 
     @GetMapping
     public ModelAndView home(
-            @RequestAttribute UserSession userSession,
-            Long offset,
-            Long limit)
+            @RequestAttribute UserSession userSession)
     throws SQLException {
         if(!userSession.hasRole(UserRole.RAW_MATERIAL_MAINTENANCE)) {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform raw-material administration");
         }
-        if(offset == null || offset <= -1) {
-            offset = 0L;
-        }
-        if(limit == null || limit <= 0) {
-            limit = 50L;
-        }
         Map<String, Object> model = new HashMap<>();
         model.put("allUnits", Unit.values());
-        List<RawMaterial> rawMaterials = rawMaterialRepository.findRawMaterial(offset, limit);
+        List<RawMaterial> rawMaterials = rawMaterialRepository.findAllRawMaterial(true);
         log.debug("found {} raw-materials", rawMaterials.size());
         model.put("rawMaterials", rawMaterials);
-        model.put("offset", offset);
-        model.put("limit", limit);
         model.put("count", rawMaterials.size());
-        model.put("nextOffset", offset + limit);
-        model.put("hasMore", rawMaterials.size() == limit);
-        model.put("hasPrev", offset > 0);
-        model.put("prevOffset", Math.max(0L, offset - limit));
         return new ModelAndView("raw-material", model);
     }
 
@@ -87,17 +73,10 @@ public class RawMaterialController {
             Long rawMaterialId,
             String name,
             String units,
-            Long offset,
-            Long limit)
+            Boolean disabled)
     throws SQLException{
         if(!userSession.hasRole(UserRole.RAW_MATERIAL_MAINTENANCE)) {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform raw-material administration");
-        }
-        if(limit == null) {
-            limit = 50L;
-        }
-        if(offset == null) {
-            offset = 0L;
         }
         Unit unit = null;
         if(units != null) {
@@ -123,9 +102,16 @@ public class RawMaterialController {
             }
             rawMaterialRepository.update(rawMaterialId, name, unit);
         }
+        else if("disable".equalsIgnoreCase(operation) || "enable".equalsIgnoreCase(operation)) {
+            if(rawMaterialId == null || disabled == null) {
+                throw new XUnsupportedOperation("cannot enable / disable raw-material without id");
+            }
+            log.debug("setting diabled to {} for material {}", disabled, rawMaterialId);
+            rawMaterialRepository.setDisabled(rawMaterialId, disabled);
+        }
         else {
             throw new XUnsupportedOperation("can't do that!");
         }
-        return "redirect:/raw-material?offset=" + offset + "&limit=" + limit;
+        return "redirect:/raw-material";
     }
 }
