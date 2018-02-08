@@ -5,9 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import rhodapharmacy.domain.RawMaterial;
+import rhodapharmacy.domain.UserSession;
+import rhodapharmacy.repo.RawMaterialRepository;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +36,9 @@ public class RawMaterialController {
         }
         Map<String, Object> model = new HashMap<>();
         model.put("allUnits", Unit.values());
-        List<RawMaterial> rawMaterials = rawMaterialRepository.findAllRawMaterial(true);
+        Iterable<RawMaterial> rawMaterialIterable = rawMaterialRepository.findAll();
+        List<RawMaterial> rawMaterials = new LinkedList<>();
+        rawMaterialIterable.forEach(rawMaterials::add);
         log.debug("found {} raw-materials", rawMaterials.size());
         model.put("rawMaterials", rawMaterials);
         model.put("count", rawMaterials.size());
@@ -53,7 +59,7 @@ public class RawMaterialController {
         if(rawMaterialId == null) {
             throw new XNoSuchRecord();
         }
-        RawMaterial rawMaterial = rawMaterialRepository.retrieve(rawMaterialId);
+        RawMaterial rawMaterial = rawMaterialRepository.findOne(rawMaterialId);
         if(rawMaterial == null) {
             throw new XNoSuchRecord();
         }
@@ -90,7 +96,11 @@ public class RawMaterialController {
                                 name == null ? "null" : name,
                                 unit == null ? "null" : unit.name()));
             }
-            rawMaterialRepository.create(name, unit);
+            RawMaterial rawMaterial = new RawMaterial();
+            rawMaterial.setUnits(Unit.valueOf(units));
+            rawMaterial.setName(name);
+            rawMaterial.setDisabled(disabled == null ? Boolean.FALSE : disabled);
+            rawMaterialRepository.save(rawMaterial);
         }
         else if("update".equalsIgnoreCase(operation)) {
             if(rawMaterialId == null || name == null || name.isEmpty() || unit == null) {
@@ -100,14 +110,26 @@ public class RawMaterialController {
                                 name == null ? "null" : name,
                                 unit == null ? "null" : unit.name()));
             }
-            rawMaterialRepository.update(rawMaterialId, name, unit);
+            RawMaterial rawMaterial = rawMaterialRepository.findOne(rawMaterialId);
+            if(rawMaterial == null) {
+                throw new XNoSuchRecord();
+            }
+            rawMaterial.setName(name);
+            rawMaterial.setDisabled(disabled == null ? rawMaterial.getDisabled() : disabled);
+            rawMaterial.setUnits(Unit.valueOf(units));
+            rawMaterialRepository.save(rawMaterial);
         }
         else if("disable".equalsIgnoreCase(operation) || "enable".equalsIgnoreCase(operation)) {
             if(rawMaterialId == null || disabled == null) {
-                throw new XUnsupportedOperation("cannot enable / disable raw-material without id");
+                throw new XUnsupportedOperation("cannot enable / disable raw-material without id or disabled value");
             }
-            log.debug("setting diabled to {} for material {}", disabled, rawMaterialId);
-            rawMaterialRepository.setDisabled(rawMaterialId, disabled);
+            RawMaterial rawMaterial = rawMaterialRepository.findOne(rawMaterialId);
+            if(rawMaterial == null) {
+                throw new XNoSuchRecord();
+            }
+            log.debug("setting disabled to {} for material {}", disabled, rawMaterialId);
+            rawMaterial.setDisabled(disabled);
+            rawMaterialRepository.save(rawMaterial);
         }
         else {
             throw new XUnsupportedOperation("can't do that!");

@@ -20,7 +20,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-4">
-                                <input name="quantity" class="form-control raw-material-quantity" type="number" min="1" placeholder="quantity" required/>
+                                <input name="quantity" class="form-control raw-material-quantity" type="number" step="any" placeholder="quantity" required/>
                             </div>
                             <div class="col-xs-4">
                                 <button type="button" class="btn btn-default remove-raw-material">Remove</button>
@@ -89,11 +89,11 @@
         });
         var $rawMaterialSelect = $(".raw-material-select");
         $rawMaterialSelect.on("change", function() {
-            $(this).closest(".raw-material-row").find(".raw-material-quantity").attr("placeholder", "1/1 000 000." + rawMaterialUnits[this.value]);
+            $(this).closest(".raw-material-row").find(".raw-material-quantity").attr("placeholder", "decimal amount in " + rawMaterialUnits[this.value]);
         });
 
         if(firstRawMaterialId !== "null") {
-            $rawMaterialSelect.closest(".raw-material-row").find(".raw-material-quantity").attr("placeholder", "1/1 000 000." + rawMaterialUnits[firstRawMaterialId]);
+            $rawMaterialSelect.closest(".raw-material-row").find(".raw-material-quantity").attr("placeholder", "decimal amount in " + rawMaterialUnits[firstRawMaterialId]);
         }
     }
 
@@ -108,7 +108,7 @@
         "        </select>" +
         "    </div>\n" +
         "    <div class=\"col-xs-4\">\n" +
-        "        <input name=\"quantity\" class=\"form-control raw-material-quantity\" type=\"number\" min=\"1\" placeholder=\"quantity\" required />\n" +
+        "        <input name=\"quantity\" class=\"form-control raw-material-quantity\" type=\"number\" step=\"any\" placeholder=\"quantity\" required />\n" +
         "    </div>\n" +
         "    <div class=\"col-xs-4\">\n" +
         "        <button type=\"button\" class=\"btn btn-default remove-raw-material\">Remove</button>\n" +

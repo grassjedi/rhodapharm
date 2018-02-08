@@ -1,10 +1,14 @@
-package rhodapharmacy;
+package rhodapharmacy.domain;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "usr")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String networkId;
     private String email;
     private String roles;
     private Date created;
@@ -13,23 +17,12 @@ public class User {
     private String tokenInfo;
     private Date tokenExpiry;
 
-    private boolean googleLoginActive;
-    private boolean sessionActive;
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNetworkId() {
-        return networkId;
-    }
-
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
     }
 
     public String getEmail() {
@@ -88,19 +81,4 @@ public class User {
         this.roles = roles;
     }
 
-    public boolean isGoogleLoginActive() {
-        return googleLoginActive;
-    }
-
-    public void setGoogleLoginActive(boolean googleLoginActive) {
-        this.googleLoginActive = googleLoginActive;
-    }
-
-    public boolean isSessionActive() {
-        return sessionActive;
-    }
-
-    public void setSessionActive(boolean sessionActive) {
-        this.sessionActive = sessionActive;
-    }
 }

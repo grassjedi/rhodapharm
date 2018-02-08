@@ -1,10 +1,17 @@
-package rhodapharmacy;
+package rhodapharmacy.domain;
 
+import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
+@Entity
 public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     private List<Formulation> formulation;
     private Boolean disabled;
 
@@ -38,5 +45,20 @@ public class Product {
 
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public void addFormulation(Formulation formulation) {
+        formulation.setProduct(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && getClass().equals(obj.getClass())
+                && (id != null && id.equals(((Product) obj).id) || ((Product) obj).id == null);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

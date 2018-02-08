@@ -5,6 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import rhodapharmacy.domain.Formulation;
+import rhodapharmacy.domain.Product;
+import rhodapharmacy.domain.RawMaterial;
+import rhodapharmacy.domain.UserSession;
+import rhodapharmacy.repo.FormulationRepository;
+import rhodapharmacy.repo.ProductRepository;
+import rhodapharmacy.repo.RawMaterialRepository;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,10 +27,12 @@ public class ProductController {
 
     private ProductRepository productRepository;
     private RawMaterialRepository rawMaterialRepository;
+    private FormulationRepository formulationRepository;
 
-    public ProductController(ProductRepository productRepository, RawMaterialRepository rawMaterialRepository) {
+    public ProductController(ProductRepository productRepository, RawMaterialRepository rawMaterialRepository, FormulationRepository formulationRepository) {
         this.productRepository = productRepository;
         this.rawMaterialRepository = rawMaterialRepository;
+        this.formulationRepository = formulationRepository;
     }
 
     @GetMapping
@@ -34,11 +43,11 @@ public class ProductController {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform product administration");
         }
         Map<String, Object> model = new HashMap<>();
-        List<RawMaterial> allRawMaterial = rawMaterialRepository.findAllRawMaterial(false);
+        List<RawMaterial> allRawMaterial = rawMaterialRepository.findAllEnabledRawMaterial();
         Long firstRawMaterialId = allRawMaterial == null || allRawMaterial.isEmpty() ? null : allRawMaterial.get(0).getId();
         model.put("firstRawMaterialId", firstRawMaterialId);
         model.put("rawMaterials", allRawMaterial);
-        model.put("products", productRepository.listProducts());
+        model.put("products", productRepository.findAll());
         return new ModelAndView("product", model);
     }
 
@@ -48,7 +57,7 @@ public class ProductController {
             String operation,
             String productName,
             Long[] rawMaterialId,
-            Long[] quantity,
+            Float[] quantity,
             Long productId,
             Boolean disabled)
     throws SQLException {
@@ -61,18 +70,23 @@ public class ProductController {
             }
             Product product = new Product();
             product.setName(productName);
+            product.setDisabled(Boolean.FALSE);
             product.setFormulation(new LinkedList<>());
+            product = productRepository.save(product);
             for(int i = 0; i < quantity.length; i++) {
                 Formulation formulation = new Formulation();
-                formulation.setRawMaterial(new RawMaterial());
-                formulation.getRawMaterial().setId(rawMaterialId[i]);
+                RawMaterial rawMaterial = rawMaterialRepository.findOne(rawMaterialId[i]);
+                formulation.setRawMaterial(rawMaterial);
                 formulation.setQuantity(quantity[i]);
-                product.getFormulation().add(formulation);
+                product.addFormulation(formulation);
+                formulation.setProduct(product);
+                formulationRepository.save(formulation);
             }
-            productRepository.create(product);
         }
         else if("disable".equals(operation)) {
-            productRepository.setDisabled(productId, disabled);
+            Product product = productRepository.findOne(productId);
+            product.setDisabled(disabled == null ? product.getDisabled() : disabled);
+            productRepository.save(product);
         }
         else {
             throw new XUnsupportedOperation("can't do that");
@@ -99,7 +113,7 @@ public class ProductController {
         Map<String, Object> model = new HashMap<>();
         model.put("offset", offset);
         model.put("limit", limit);
-        model.put("product", productRepository.retrieve(productId));
+        model.put("product", productRepository.findOne(productId));
         return new ModelAndView("show_product", model);
     }
 }

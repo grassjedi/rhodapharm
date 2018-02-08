@@ -2,9 +2,11 @@ package rhodapharmacy.signin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import rhodapharmacy.*;
+import rhodapharmacy.AuthorisationService;
+import rhodapharmacy.XAuthorisationFailure;
+import rhodapharmacy.domain.UserSession;
+import rhodapharmacy.repo.UserSessionRepository;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
@@ -25,10 +27,13 @@ public class GoogleAuthFilter implements Filter {
     private String googleAuthUrl;
     private String authCallbackUrl;
     private AuthorisationService authorisationService;
+    private UserSessionRepository userSessionRepository;
 
     public GoogleAuthFilter(
             SecuredConfig securedConfig,
+            UserSessionRepository userSessionRepository,
             AuthorisationService authorisationService) {
+        this.userSessionRepository = userSessionRepository;
         this.authorisationService = authorisationService;
         String clientId      = securedConfig.getProperty("google.clientId");
         String redirectUri    = securedConfig.getProperty("google.redirectUrl");
@@ -77,7 +82,7 @@ public class GoogleAuthFilter implements Filter {
             }
             String callbackState = queryParams.get("state");
             log.debug("looking up session: {}", callbackState);
-            UserSession userSession = authorisationService.getSession(callbackState);
+            UserSession userSession = userSessionRepository.findBySessionKey(callbackState);
             if(userSession == null) {
                 String googleAuthUrl = this.googleAuthUrl.replace(STATE_TOKEN, authorisationService.createSession().getSessionKey());
                 res.sendRedirect(googleAuthUrl);

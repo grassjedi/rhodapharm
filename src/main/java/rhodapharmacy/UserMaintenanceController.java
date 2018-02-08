@@ -5,9 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import rhodapharmacy.domain.User;
+import rhodapharmacy.domain.UserSession;
+import rhodapharmacy.repo.UserRepository;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
@@ -28,7 +33,8 @@ public class UserMaintenanceController {
         if(!userSession.isAuthorised() || !userSession.hasRole(UserRole.USER_ADMIN)) {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform user administration");
         }
-        List<User> users = userRepository.listUsers();
+        List<User> users = new LinkedList<>();
+        userRepository.findAll().forEach(users::add);
         return new ModelAndView("user", Util.mapOf("users", users));
     }
 
@@ -45,18 +51,29 @@ public class UserMaintenanceController {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform user administration");
         }
         if("update".equalsIgnoreCase(operation)) {
-            userRepository.updateUser(userId, roles);
+            User user = userRepository.findOne(userId);
+            UserRole.validate(roles);
+            user.setRoles(roles);
+            userRepository.save(user);
         }
         else if("create".equalsIgnoreCase(operation)) {
             if(email != null && !"".equals(email.trim())) {
-                userRepository.addUser(email, roles);
+                UserRole.validate(roles);
+                User user = new User();
+                user.setEmail(email);
+                user.setRoles(roles);
+                userRepository.save(user);
             }
         }
         else if("disable".equalsIgnoreCase(operation)) {
-            userRepository.disableUser(userId);
+            User user = userRepository.findOne(userId);
+            user.setDisabled(new Date());
+            userRepository.save(user);
         }
         else if("enable".equalsIgnoreCase(operation)) {
-            userRepository.enableUser(userId);
+            User user = userRepository.findOne(userId);
+            user.setDisabled(null);
+            userRepository.save(user);
         }
         else {
             throw new XUnsupportedOperation();
@@ -73,7 +90,7 @@ public class UserMaintenanceController {
                 || !userSession.hasRole(UserRole.USER_ADMIN)) {
             throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform user administration");
         }
-        User user = userRepository.retrieveUser(userId);
+        User user = userRepository.findOne(userId);
         return new ModelAndView("show_user", Util.mapOf("allRoles", UserRole.values(), "user", user));
     }
 

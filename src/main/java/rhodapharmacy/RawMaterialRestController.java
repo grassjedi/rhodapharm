@@ -3,6 +3,8 @@ package rhodapharmacy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import rhodapharmacy.domain.RawMaterial;
+import rhodapharmacy.repo.RawMaterialRepository;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,6 +22,6 @@ public class RawMaterialRestController {
     @GetMapping
     public List<RawMaterial> search(String q)
     throws SQLException {
-        return rawMaterialRepository.findRawMaterial(q, 0L, 20L);
+        return rawMaterialRepository.findRawMaterial(q);
     }
 }
