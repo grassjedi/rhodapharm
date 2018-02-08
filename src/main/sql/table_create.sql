@@ -37,7 +37,7 @@ CREATE TABLE formulation (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   raw_material_id BIGINT NOT NULL REFERENCES raw_material(id),
   product_id BIGINT NOT NULL REFERENCES product(id),
-  quantity BIGINT NOT NULL,
+  quantity FLOAT NOT NULL,
   disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
