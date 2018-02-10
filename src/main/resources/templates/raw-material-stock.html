@@ -45,7 +45,7 @@
                         <td>{{ receipt.supplier }}</td>
                         <td>{{ receipt.invoiceNumber }} on {{ receipt.invoiceDate }}</td>
                         <td>{{ receipt.quantity }} {{ receipt.rawMaterial.units.displayName }}</td>
-                        <td>{{ receipt.value }}</td>
+                        <td>{{ receipt.value | currencyformat }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

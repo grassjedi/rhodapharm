@@ -46,7 +46,7 @@
                         {% endif %}
                         <td>{{ material.units.displayName }}</td>
                         <td>{{ material.totalQuantity }} {{ material.units.displayName }}</td>
-                        <td>{{ material.totalValue }}</td>
+                        <td>{{ material.totalValue | currencyformat }}</td>
                         <td><a href="/raw-material/{{ material.id }}/stock" class="btn btn-default">Capture Stock</a></td>
                     </tr>
                 {% endfor %}

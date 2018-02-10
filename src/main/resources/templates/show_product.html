@@ -31,7 +31,7 @@
                     {% for value in product.values %}
                         <tr>
                             <td>{{ value.effectiveDate }}</td>
-                            <td>{{ value.value }}</td>
+                            <td>{{ value.value | currencyformat }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

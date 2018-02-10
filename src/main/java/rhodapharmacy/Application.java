@@ -41,4 +41,9 @@ public class Application {
         factoryBean.setEntityManagerFactory(entityManagerFactory);
         return factoryBean;
     }
+
+    @Bean
+    public PebbleExtension pebbleExtension() {
+        return new PebbleExtension();
+    }
 }

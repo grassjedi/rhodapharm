@@ -32,7 +32,7 @@
                     <tr outputId="{{ output.id }}">
                         <td>{{ output.dateCaptured }} by {{ output.user.email }}</td>
                         <td>{{ output.quantity }} Units</td>
-                        <td>{{ output.value }}</td>
+                        <td>{{ output.value | currencyformat }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
