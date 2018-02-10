@@ -79,7 +79,7 @@ public class RawMaterialReceipt {
         this.supplier = supplier;
     }
 
-    public Float getQuatity() {
+    public Float getQuantity() {
         return quantity;
     }
 

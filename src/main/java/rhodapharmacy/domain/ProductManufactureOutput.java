@@ -18,7 +18,6 @@ public class ProductManufactureOutput {
 
     private Date dateCaptured;
     private Long quantity;
-    private Long value;
 
     public Long getId() {
         return id;
@@ -60,11 +59,10 @@ public class ProductManufactureOutput {
         this.quantity = quatity;
     }
 
+    @Transient
     public Long getValue() {
-        return value;
-    }
-
-    public void setValue(Long value) {
-        this.value = value;
+        ProductValue productValue = product.findProductValueAt(dateCaptured);
+        if(productValue == null) return null;
+        return productValue.getValue() * quantity;
     }
 }

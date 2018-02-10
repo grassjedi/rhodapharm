@@ -2,6 +2,7 @@ package rhodapharmacy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,18 +24,21 @@ public class ProductController {
     private RawMaterialRepository rawMaterialRepository;
     private FormulationRepository formulationRepository;
     private UserRepository userRepository;
+    private ProductValueRepository productValueRepository;
 
     public ProductController(
             ProductRepository productRepository,
             ProductManufactureOutputRepository productManufactureOutputRepository,
             RawMaterialRepository rawMaterialRepository,
             FormulationRepository formulationRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            ProductValueRepository productValueRepository) {
         this.productRepository = productRepository;
         this.rawMaterialRepository = rawMaterialRepository;
         this.formulationRepository = formulationRepository;
         this.productManufactureOutputRepository = productManufactureOutputRepository;
         this.userRepository = userRepository;
+        this.productValueRepository = productValueRepository;
     }
 
     @GetMapping
@@ -119,6 +123,39 @@ public class ProductController {
         return new ModelAndView("show_product", model);
     }
 
+    @PostMapping("/{productId}")
+    @Transactional
+    public String show(
+            @RequestAttribute UserSession userSession,
+            @PathVariable(name = "productId") Long productId,
+            String name,
+            Float value,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date valueEffectiveDate)
+    throws SQLException {
+        if(!userSession.hasRole(UserRole.PRODUCT_MAINTENANCE)) {
+            throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform product administration");
+        }
+        User attachedUser = userRepository.findOne(userSession.getUser().getId());
+        Product product = productRepository.findOne(productId);
+        if(valueEffectiveDate != null && value != null) {
+            log.debug("Saving new value " + value);
+            ProductValue productValue = new ProductValue();
+            productValue.setValue(((Number)(value * 100L)).longValue());
+            productValue.setProduct(product);
+            productValue.setUser(attachedUser);
+            productValue.setEffectiveDate(valueEffectiveDate);
+            productValueRepository.save(productValue);
+        }
+        if(name != null) {
+            String trimmedName = name.trim();
+            if(!trimmedName.isEmpty() && !trimmedName.equals(product.getName())) {
+                product.setName(trimmedName);
+                productRepository.save(product);
+            }
+        }
+        return "redirect:/product/" + product.getId();
+    }
+
     @GetMapping("{productId}/stock")
     public ModelAndView viewProductManufactureOutput(
             @RequestAttribute(name = "userSession") UserSession userSession,
@@ -152,8 +189,6 @@ public class ProductController {
         output.setProduct(product);
         output.setDateCaptured(new Date());
         output.setQuantity(quantity);
-        // TODO: receipt.setValue(value.longValue() * 100L);
-        output.setValue(0L);
         productManufactureOutputRepository.save(output);
         return "redirect:/product/" + productId + "/stock";
     }

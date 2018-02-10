@@ -48,6 +48,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Raw Materials</th>
+                        <th>Value</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -61,6 +62,9 @@
                                         <li>{{ formulation.rawMaterial.name }} ({{ formulation.quantityDescription }})</li>
                                     {% endfor %}
                                 </ul>
+                            </td>
+                            <td>
+                                {{ product.currentProductValue.value }}
                             </td>
                             <td>
                                 {% if userSession.productManufactureAdmin %}

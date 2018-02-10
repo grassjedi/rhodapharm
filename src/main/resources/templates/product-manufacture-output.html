@@ -31,7 +31,7 @@
                 {% for output in outputs %}
                     <tr outputId="{{ output.id }}">
                         <td>{{ output.dateCaptured }} by {{ output.user.email }}</td>
-                        <td>{{ output.quantity }}</td>
+                        <td>{{ output.quantity }} Units</td>
                         <td>{{ output.value }}</td>
                     </tr>
                 {% endfor %}

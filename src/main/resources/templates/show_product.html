@@ -1,0 +1,50 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <form id="update-form" method="post" action="/product/{{ product.id }}">
+                <div class="col-xs-12">
+                    <input name="name" class="form-control" type="text" value="{{ product.name }}" placeholder="Product name"/>
+                    <input name="value" class="form-control" type="number" step="any" placeholder="price"/>
+                    <input name="valueEffectiveDate" id="effectiveDate" class="form-control" type="date" title="Value effective date"/>
+                    <div class=" btn-group">
+                        <a id="cancel-button" class="btn btn-primary" href="/raw-material?offset={{ offset }}&limit={{ limit }}">Cancel</a>
+                        <button id="save-button" name="save-button" type="submit" class="btn btn-default">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for value in product.values %}
+                        <tr>
+                            <td>{{ value.effectiveDate }}</td>
+                            <td>{{ value.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#value").on("change", function() {
+        var date = new Date();
+        document.getElementById("effectiveDate").defaultValue = "" + date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+    });
+</script>
+
+{% endblock %}

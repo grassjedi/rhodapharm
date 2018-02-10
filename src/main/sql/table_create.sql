@@ -66,9 +66,18 @@ CREATE TABLE product_manufacture_output(
   user_id BIGINT NOT NULL REFERENCES usr(id),
   product_id BIGINT REFERENCES product(id),
   date_captured TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  quantity FLOAT NOT NULL,
-  value BIGINT NOT NULL
+  quantity FLOAT NOT NULL
 );
 
 ALTER TABLE product_manufacture_output ADD CONSTRAINT product_manufacture_output_unique UNIQUE (product_id, user_id, date_captured);
 CREATE INDEX product_manufacture_output_product_fk on product_manufacture_output(product_id);
+
+CREATE TABLE product_value (
+  id BIGSERIAL NOT NULL PRIMARY KEY,
+  product_id BIGINT NOT NULL REFERENCES product(id),
+  user_id BIGINT NOT NULL REFERENCES usr(id),
+  effective_date TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  value BIGINT NOT NULL
+);
+
+CREATE INDEX product_value_date_captured_index ON product_value(date_captured);

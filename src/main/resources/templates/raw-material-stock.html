@@ -44,7 +44,7 @@
                         <td>{{ receipt.dateCaptured }} by {{ receipt.user.email }}</td>
                         <td>{{ receipt.supplier }}</td>
                         <td>{{ receipt.invoiceNumber }} on {{ receipt.invoiceDate }}</td>
-                        <td>{{ receipt.quantity }} {{ receipt.rawMaterial.units }}</td>
+                        <td>{{ receipt.quantity }} {{ receipt.rawMaterial.units.displayName }}</td>
                         <td>{{ receipt.value }}</td>
                     </tr>
                 {% endfor %}

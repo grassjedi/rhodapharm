@@ -1,9 +1,7 @@
 package rhodapharmacy.domain;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Product {
@@ -17,6 +15,8 @@ public class Product {
     private Boolean disabled;
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProductManufactureOutput> productManufactureOutput;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<ProductValue> values;
 
     public Long getId() {
         return id;
@@ -60,6 +60,37 @@ public class Product {
 
     public void setProductManufactureOutput(List<ProductManufactureOutput> productManufactureOutput) {
         this.productManufactureOutput = productManufactureOutput;
+    }
+
+    public List<ProductValue> getValues() {
+        return values;
+    }
+
+    public void setValues(List<ProductValue> values) {
+        this.values = values;
+    }
+
+    @Transient
+    public ProductValue getCurrentProductValue() {
+        if(this.values == null || this.values.isEmpty()) return null;
+        SortedSet<ProductValue> sortedValues = new TreeSet<>(this.values);
+        return sortedValues.last();
+    }
+
+    @Transient
+    public ProductValue findProductValueAt(Date date) {
+        if(this.values == null || this.values.isEmpty()) return null;
+        SortedSet<ProductValue> sortedValues = new TreeSet<>(this.values);
+        ProductValue last = null;
+        for(ProductValue value : sortedValues) {
+            if(value.getEffectiveDate().equals(date) || value.getEffectiveDate().before(date)) {
+                last = value;
+            }
+            else {
+                break;
+            }
+        }
+        return last;
     }
 
     @Override
