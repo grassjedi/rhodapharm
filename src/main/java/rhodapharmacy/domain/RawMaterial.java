@@ -25,6 +25,9 @@ public class RawMaterial {
     @Transient
     private Long totalValue = 0L;
 
+    @Transient
+    private Float totalUsage = 0.0f;
+
     public Long getId() {
         return id;
     }
@@ -79,6 +82,18 @@ public class RawMaterial {
 
     public void setTotalValue(Long totalValue) {
         this.totalValue = totalValue;
+    }
+
+    public Float getTotalUsage() {
+        return totalUsage;
+    }
+
+    public void setTotalUsage(Float totalUsage) {
+        this.totalUsage = totalUsage;
+    }
+
+    public Float nettTotalQuantity() {
+        return this.totalQuantity - totalUsage;
     }
 
     @Override

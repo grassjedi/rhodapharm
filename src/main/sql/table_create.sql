@@ -80,4 +80,4 @@ CREATE TABLE product_value (
   value BIGINT NOT NULL
 );
 
-CREATE INDEX product_value_date_captured_index ON product_value(date_captured);
+CREATE INDEX product_value_date_captured_index ON product_value(effective_date);
