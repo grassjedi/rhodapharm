@@ -4,25 +4,31 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "raw_material_receipt")
 public class RawMaterialReceipt {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne private RawMaterial rawMaterial;
-    @ManyToOne private User user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private User user;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private RawMaterial rawMaterial;
+
     private Date dateCaptured;
     private Date invoiceDate;
+    private String invoiceNumber;
     private String supplier;
-    private Long quantity;
+    private Float quantity;
     private Long value;
 
-    public RawMaterial getRawMaterial() {
-        return rawMaterial;
+    public Long getId() {
+        return id;
     }
 
-    public void setRawMaterial(RawMaterial rawMaterial) {
-        this.rawMaterial = rawMaterial;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -31,6 +37,14 @@ public class RawMaterialReceipt {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public RawMaterial getRawMaterial() {
+        return rawMaterial;
+    }
+
+    public void setRawMaterial(RawMaterial rawMaterial) {
+        this.rawMaterial = rawMaterial;
     }
 
     public Date getDateCaptured() {
@@ -49,6 +63,14 @@ public class RawMaterialReceipt {
         this.invoiceDate = invoiceDate;
     }
 
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
     public String getSupplier() {
         return supplier;
     }
@@ -57,12 +79,12 @@ public class RawMaterialReceipt {
         this.supplier = supplier;
     }
 
-    public Long getQuantity() {
+    public Float getQuatity() {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
+    public void setQuantity(Float quatity) {
+        this.quantity = quatity;
     }
 
     public Long getValue() {

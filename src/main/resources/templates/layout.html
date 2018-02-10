@@ -27,7 +27,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 {% if userSession.userAdmin %}<li><a href="/user">Users</a></li>{% endif %}
-                {% if userSession.rawMaterialAdmin %}<li><a href="/raw-material">Raw Material</a></li>{% endif %}
+                {% if userSession.rawMaterialAdmin or userSession.rawMaterialStockAdmin %}<li><a href="/raw-material">Raw Material</a></li>{% endif %}
                 {% if userSession.productAdmin %}<li><a href="/product">Products</a></li>{% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">

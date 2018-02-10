@@ -3,6 +3,7 @@
 {% block body %}
 
 <div class="container">
+    {% if userSession.rawMaterialAdmin %}
     <div class="row">
         <form id="create-form" method="post" action="/raw-material">
             <div class="col-xs-4">
@@ -21,6 +22,7 @@
             </div>
         </form>
     </div>
+    {% endif %}
     <div class="row"><div class="col-xs-12">&nbsp;</div></div>
     <div class="row">
         <div class="col-xs-12">
@@ -29,15 +31,23 @@
                     <tr>
                         <th>Name</th>
                         <th>Units</th>
-                        <th>Disabled</th>
+                        <th>Stock</th>
+                        <th>Value</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for material in rawMaterials %}
                     <tr materialId="{{ material.id }}">
-                        <td><a href="/raw-material/{{ material.id }}?offset={{ offset }}&limit={{ limit }}">{{ material.name }}</a></td>
+                        {% if userSession.rawMaterialAdmin %}
+                            <td><a href="/raw-material/{{ material.id }}?offset={{ offset }}&limit={{ limit }}">{{ material.name }}</a></td>
+                        {% else %}
+                            <td>{{ material.name }}</td>
+                        {% endif %}
                         <td>{{ material.units.displayName }}</td>
-                        <td><input class="form-control disabled-checkbox" type="checkbox" {% if material.disabled == true %}checked{% endif %}/></td>
+                        <td>{{ material.totalQuantity }} {{ material.units.displayName }}</td>
+                        <td>{{ material.totalValue }}</td>
+                        <td><a href="/raw-material/{{ material.id }}/stock" class="btn btn-default">Capture Stock</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

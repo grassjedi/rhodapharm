@@ -6,7 +6,7 @@ import rhodapharmacy.domain.RawMaterial;
 
 import java.util.List;
 
-public interface RawMaterialRepository extends CrudRepository<RawMaterial, Long> {
+public interface RawMaterialRepository extends CrudRepository<RawMaterial, Long>, RawMaterialCustomRepository {
 
     @Query("select r from RawMaterial r where r.name like ?1")
     List<RawMaterial> findRawMaterial(String query);

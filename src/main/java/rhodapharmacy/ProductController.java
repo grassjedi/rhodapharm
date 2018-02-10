@@ -14,10 +14,7 @@ import rhodapharmacy.repo.ProductRepository;
 import rhodapharmacy.repo.RawMaterialRepository;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(path = "/product")

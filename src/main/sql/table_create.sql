@@ -22,14 +22,14 @@ CREATE INDEX usr_session_key ON usr_session(session_key);
 
 CREATE TABLE raw_material (
   id BIGSERIAL PRIMARY KEY NOT NULL,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   units TEXT NOT NULL,
   disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE product (
   id BIGSERIAL PRIMARY KEY NOT NULL,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -41,6 +41,8 @@ CREATE TABLE formulation (
   disabled BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+ALTER TABLE formulation ADD CONSTRAINT formulation_unique_formulation UNIQUE (raw_material_id, product_id);
+
 CREATE INDEX formulation_product_foreign_key_index ON formulation(product_id);
 CREATE INDEX formulation_raw_material_foreign_key_index ON formulation(raw_material_id);
 
@@ -50,9 +52,11 @@ CREATE TABLE raw_material_receipt (
   raw_material_id BIGINT REFERENCES raw_material(id),
   date_captured TIMESTAMP NOT NULL DEFAULT current_timestamp,
   invoice_date TIMESTAMP NOT NULL,
+  invoice_number TEXT NOT NULL,
   supplier TEXT NOT NULL,
-  quantity BIGINT NOT NULL,
+  quantity FLOAT NOT NULL,
   value BIGINT NOT NULL
 );
 
+ALTER TABLE raw_material_receipt ADD CONSTRAINT raw_material_receipt_unique UNIQUE (raw_material_id, user_id, invoice_number);
 CREATE INDEX raw_material_receipt_raw_material_fk on raw_material_receipt(raw_material_id);

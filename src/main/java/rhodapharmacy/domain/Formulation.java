@@ -6,21 +6,24 @@ import javax.persistence.*;
 @Table(name = "formulation")
 public class Formulation {
 
-    @EmbeddedId
-    private FormulationPrimaryKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    @ManyToOne
-    @MapsId("productId")
+    @ManyToOne(cascade = CascadeType.ALL)
     private Product product;
 
-    @ManyToOne
-    @MapsId("rawMaterialId")
+    @ManyToOne(cascade = CascadeType.ALL)
     private RawMaterial rawMaterial;
 
     private Float quantity;
 
-    public Formulation() {
-        id = new FormulationPrimaryKey();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public RawMaterial getRawMaterial() {

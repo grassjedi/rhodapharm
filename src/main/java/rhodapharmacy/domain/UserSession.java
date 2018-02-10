@@ -98,6 +98,11 @@ public class UserSession {
     }
 
     @Transient
+    public boolean getRawMaterialStockAdmin() {
+        return hasRole(UserRole.RAW_MATERIAL_STOCK_ADMIN);
+    }
+
+    @Transient
     public boolean getProductAdmin() {
         return hasRole(UserRole.PRODUCT_MAINTENANCE);
     }

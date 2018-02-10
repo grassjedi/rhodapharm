@@ -2,10 +2,8 @@ package rhodapharmacy.domain;
 
 import rhodapharmacy.Unit;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,8 +12,18 @@ public class RawMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private Unit units;
     private Boolean disabled;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<RawMaterialReceipt> receipts;
+
+    @Transient
+    private Float totalQuantity = 0.0f;
+
+    @Transient
+    private Long totalValue = 0L;
 
     public Long getId() {
         return id;
@@ -47,6 +55,30 @@ public class RawMaterial {
 
     public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public List<RawMaterialReceipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(List<RawMaterialReceipt> receipts) {
+        this.receipts = receipts;
+    }
+
+    public Float getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Float totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Long getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue(Long totalValue) {
+        this.totalValue = totalValue;
     }
 
     @Override
