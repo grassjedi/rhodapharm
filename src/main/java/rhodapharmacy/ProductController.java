@@ -3,15 +3,11 @@ package rhodapharmacy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import rhodapharmacy.domain.Formulation;
-import rhodapharmacy.domain.Product;
-import rhodapharmacy.domain.RawMaterial;
-import rhodapharmacy.domain.UserSession;
-import rhodapharmacy.repo.FormulationRepository;
-import rhodapharmacy.repo.ProductRepository;
-import rhodapharmacy.repo.RawMaterialRepository;
+import rhodapharmacy.domain.*;
+import rhodapharmacy.repo.*;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -23,13 +19,22 @@ public class ProductController {
     private static Logger log = LoggerFactory.getLogger(ProductController.class);
 
     private ProductRepository productRepository;
+    private ProductManufactureOutputRepository productManufactureOutputRepository;
     private RawMaterialRepository rawMaterialRepository;
     private FormulationRepository formulationRepository;
+    private UserRepository userRepository;
 
-    public ProductController(ProductRepository productRepository, RawMaterialRepository rawMaterialRepository, FormulationRepository formulationRepository) {
+    public ProductController(
+            ProductRepository productRepository,
+            ProductManufactureOutputRepository productManufactureOutputRepository,
+            RawMaterialRepository rawMaterialRepository,
+            FormulationRepository formulationRepository,
+            UserRepository userRepository) {
         this.productRepository = productRepository;
         this.rawMaterialRepository = rawMaterialRepository;
         this.formulationRepository = formulationRepository;
+        this.productManufactureOutputRepository = productManufactureOutputRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -112,5 +117,44 @@ public class ProductController {
         model.put("limit", limit);
         model.put("product", productRepository.findOne(productId));
         return new ModelAndView("show_product", model);
+    }
+
+    @GetMapping("{productId}/stock")
+    public ModelAndView viewProductManufactureOutput(
+            @RequestAttribute(name = "userSession") UserSession userSession,
+            @PathVariable(name = "productId") Long productId
+    ) {
+        if(!userSession.hasRole(UserRole.PRODUCT_MANUFACTURE_ADMIN)) {
+            throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform raw-material administration");
+        }
+        Product product = productRepository.findOne(productId);
+        List<ProductManufactureOutput> outputs = productManufactureOutputRepository.findByProduct(product);
+        Map<String, Object> model = new HashMap<>();
+        model.put("outputs", outputs);
+        model.put("product", product);
+        return new ModelAndView("product-manufacture-output", model);
+    }
+
+    @PostMapping(path = "{productId}/stock")
+    @Transactional
+    String captureStockReceipt(
+            @RequestAttribute(name = "userSession") UserSession userSession,
+            @PathVariable(name = "productId") Long productId,
+            Long quantity
+    ) {
+        if(!userSession.hasRole(UserRole.PRODUCT_MANUFACTURE_ADMIN)) {
+            throw new XPermissionDenied("\"" + userSession.getUserEmail() + "\" may not perform raw-material administration");
+        }
+        Product product = productRepository.findOne(productId);
+        ProductManufactureOutput output = new ProductManufactureOutput();
+        User outputUser = userRepository.findOne(userSession.getUser().getId());
+        output.setUser(outputUser);
+        output.setProduct(product);
+        output.setDateCaptured(new Date());
+        output.setQuantity(quantity);
+        // TODO: receipt.setValue(value.longValue() * 100L);
+        output.setValue(0L);
+        productManufactureOutputRepository.save(output);
+        return "redirect:/product/" + productId + "/stock";
     }
 }

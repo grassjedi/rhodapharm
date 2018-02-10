@@ -1,0 +1,44 @@
+{% extends 'layout' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <p>Capture Manufacture output for "{{ product.name }}"</p>
+        </div>
+        <form id="create-form" method="post" action="/product/{{ product.id }}/stock">
+            <div class="col-xs-4">
+                <input name="quantity" class="form-control" type="number" step="1" placeholder="Quantity (units)" required/>
+            </div>
+            <div class="col-xs-4">
+                <button id="save-button" name="save-button" class="btn btn-default">Add</button>
+            </div>
+        </form>
+    </div>
+    <div class="row"><div class="col-xs-12">&nbsp;</div></div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Captured</th>
+                        <th>Quantity</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for output in outputs %}
+                    <tr outputId="{{ output.id }}">
+                        <td>{{ output.dateCaptured }} by {{ output.user.email }}</td>
+                        <td>{{ output.quantity }}</td>
+                        <td>{{ output.value }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -15,6 +15,8 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     private List<Formulation> formulation;
     private Boolean disabled;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ProductManufactureOutput> productManufactureOutput;
 
     public Long getId() {
         return id;
@@ -50,6 +52,14 @@ public class Product {
 
     public void addFormulation(Formulation formulation) {
         formulation.setProduct(this);
+    }
+
+    public List<ProductManufactureOutput> getProductManufactureOutput() {
+        return productManufactureOutput;
+    }
+
+    public void setProductManufactureOutput(List<ProductManufactureOutput> productManufactureOutput) {
+        this.productManufactureOutput = productManufactureOutput;
     }
 
     @Override

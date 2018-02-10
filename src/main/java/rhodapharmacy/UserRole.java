@@ -6,7 +6,8 @@ public enum UserRole {
     USER_ADMIN("User Administration"),
     RAW_MATERIAL_MAINTENANCE("Raw Materials Administration"),
     PRODUCT_MAINTENANCE("Product Administration"),
-    RAW_MATERIAL_STOCK_ADMIN("Capture Receipt of Raw Materials");
+    RAW_MATERIAL_STOCK_ADMIN("Capture Receipt of Raw Materials"),
+    PRODUCT_MANUFACTURE_ADMIN("Capture products manufactured");
 
     private final String displayName;
 

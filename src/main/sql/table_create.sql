@@ -60,3 +60,15 @@ CREATE TABLE raw_material_receipt (
 
 ALTER TABLE raw_material_receipt ADD CONSTRAINT raw_material_receipt_unique UNIQUE (raw_material_id, user_id, invoice_number);
 CREATE INDEX raw_material_receipt_raw_material_fk on raw_material_receipt(raw_material_id);
+
+CREATE TABLE product_manufacture_output(
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  user_id BIGINT NOT NULL REFERENCES usr(id),
+  product_id BIGINT REFERENCES product(id),
+  date_captured TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  quantity FLOAT NOT NULL,
+  value BIGINT NOT NULL
+);
+
+ALTER TABLE product_manufacture_output ADD CONSTRAINT product_manufacture_output_unique UNIQUE (product_id, user_id, date_captured);
+CREATE INDEX product_manufacture_output_product_fk on product_manufacture_output(product_id);

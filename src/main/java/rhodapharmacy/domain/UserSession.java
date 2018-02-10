@@ -106,4 +106,9 @@ public class UserSession {
     public boolean getProductAdmin() {
         return hasRole(UserRole.PRODUCT_MAINTENANCE);
     }
+
+    @Transient
+    public boolean getProductManufactureAdmin() {
+        return hasRole(UserRole.PRODUCT_MANUFACTURE_ADMIN);
+    }
 }

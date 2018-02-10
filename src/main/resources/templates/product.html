@@ -5,48 +5,50 @@
 <script type="text/javascript" src="/js/bootstrap3-typeahead.js"></script>
 
 <div class="container">
+    {% if userSession.productAdmin %}
     <div class="row">
-        <div class="row">
-            <div class="col-xs-12">
-                <form method="post" action="/product">
-                    <input id="product-name" name="productName" class="form-control" type="text" placeholder="product name" required/>
-                    <div id="raw-material-list" class="container">
-                        <div class="row raw-material-row">
-                            <div class="col-xs-4">
-                                <select name="rawMaterialId" class="form-control raw-material-select" required>
-                                    {% for rawMaterial in rawMaterials %}
-                                        <option value="{{ rawMaterial.id }}" {% if rawMaterial.id == firstRawMaterialId %}selected{% endif %}>{{ rawMaterial.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-xs-4">
-                                <input name="quantity" class="form-control raw-material-quantity" type="number" step="any" placeholder="quantity" required/>
-                            </div>
-                            <div class="col-xs-4">
-                                <button type="button" class="btn btn-default remove-raw-material">Remove</button>
-                            </div>
+        <div class="col-xs-12">
+            <form method="post" action="/product">
+                <input id="product-name" name="productName" class="form-control" type="text" placeholder="product name" required/>
+                <div id="raw-material-list" class="container">
+                    <div class="row raw-material-row">
+                        <div class="col-xs-4">
+                            <select name="rawMaterialId" class="form-control raw-material-select" required>
+                                {% for rawMaterial in rawMaterials %}
+                                    <option value="{{ rawMaterial.id }}" {% if rawMaterial.id == firstRawMaterialId %}selected{% endif %}>{{ rawMaterial.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <div id="add-raw-material-row" class="row">
-                            <div class="col-xs-12">
-                                <button id="add-raw-material" type="button" class="btn btn-default">Add Raw Material</button>
-                            </div>
+                        <div class="col-xs-4">
+                            <input name="quantity" class="form-control raw-material-quantity" type="number" step="any" placeholder="quantity" required/>
+                        </div>
+                        <div class="col-xs-4">
+                            <button type="button" class="btn btn-default remove-raw-material">Remove</button>
                         </div>
                     </div>
-                    <div class="btn-group">
-                        <button id="save-button" name="save-button" class="btn btn-default">Save Product</button>
-                        <button id="clear-button" type="button" name="save-button" class="btn btn-default">Clear Form</button>
+                    <div id="add-raw-material-row" class="row">
+                        <div class="col-xs-12">
+                            <button id="add-raw-material" type="button" class="btn btn-default">Add Raw Material</button>
+                        </div>
                     </div>
-                    <input id="create-operation" name="operation" value="create" type="hidden" />
-                </form>
-            </div>
+                </div>
+                <div class="btn-group">
+                    <button id="save-button" name="save-button" class="btn btn-default">Save Product</button>
+                    <button id="clear-button" type="button" name="save-button" class="btn btn-default">Clear Form</button>
+                </div>
+                <input id="create-operation" name="operation" value="create" type="hidden" />
+            </form>
         </div>
+    </div>
+    {% endif %}
+    <div class="row">
         <div class="col-xs-12">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Raw Materials</th>
-                        <th>Disabled</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,7 +62,11 @@
                                     {% endfor %}
                                 </ul>
                             </td>
-                            <td><input type="checkbox" class="form-control disabled-checkbox" {% if product.disabled %}checked{% endif %}/></td>
+                            <td>
+                                {% if userSession.productManufactureAdmin %}
+                                <a href="/product/{{ product.id }}/stock" class="btn btn-default">Capture Stock</a>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

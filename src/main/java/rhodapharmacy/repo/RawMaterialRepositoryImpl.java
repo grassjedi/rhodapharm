@@ -46,10 +46,10 @@ public class RawMaterialRepositoryImpl implements RawMaterialCustomRepository {
                 material.setUnits(Unit.valueOf((String)tuple[2]));
                 material.setDisabled((Boolean) tuple[3]);
                 if(tuple[4] != null) {
-                    material.setTotalQuantity((Float) tuple[4]);
+                    material.setTotalQuantity(((Number) tuple[4]).floatValue());
                 }
                 if(tuple[5] != null) {
-                    material.setTotalValue(((BigInteger) tuple[5]).longValue());
+                    material.setTotalValue(((Number) tuple[5]).longValue());
                 }
                 return material;
             }
